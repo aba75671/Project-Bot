@@ -18,8 +18,19 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-// when the client is ready, run this code
-// this event will only trigger one time after logging in
+// event handling
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+
+for (const file of eventFiles) {
+	const event = require(`./events/${file}`);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
+	}
+}
+
+// when the client is ready, run this code, this event will only trigger one time after logging in
 client.once('ready', () => {
 	console.log('Ready!');
 });
