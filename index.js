@@ -50,6 +50,8 @@ client.on('interactionCreate', async interaction => {
 	}
 });
 
+client.login(token); // login to Discord with your app's token
+
 // client.on('message', message => {
 //  	if (message.content.toLowerCase().includes('KEYWORD')) { // if message has the indicated word, sends a picture
 // 		message.channel.send({files: ['./images/FILENAMEHERE']});
@@ -85,5 +87,3 @@ client.on('interactionCreate', async interaction => {
 // 	}
 
 // });
-
-client.login(token); // login to Discord with your app's token
