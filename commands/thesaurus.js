@@ -27,7 +27,7 @@ module.exports = {
 
     const meta = await fetch(
       `https://www.dictionaryapi.com/api/v3/references/thesaurus/json/${query}?key=${thesaurusKey}`,
-      { method: 'GET' }
+      { method: "GET" }
     ).then((response) => response.json());
 
     if (!meta[0]) {
