@@ -5,6 +5,7 @@ const { token } = require("./config.json");
 // create a new Discord client with specified intents
 const myIntents = new Intents();
 myIntents.add(
+  Intents.FLAGS.GUILD_MESSAGES,
   Intents.FLAGS.GUILD_PRESENCES,
   Intents.FLAGS.GUILD_MEMBERS,
   Intents.FLAGS.GUILDS
@@ -62,39 +63,3 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(token); // login to Discord with your app's token
-
-// client.on('message', message => {
-//  	if (message.content.toLowerCase().includes('KEYWORD')) { // if message has the indicated word, sends a picture
-// 		message.channel.send({files: ['./images/FILENAMEHERE']});
-// 	}
-
-// 	// when the specified user types a message, react to the message with smiling emoji
-//  	if (message.author.id === '124332689707892736') {
-// 		const emoji = message.guild.emojis.find(emoji => emoji.name === 'smile');
-// 		message.react(emoji);
-// 	}
-
-//  	if (isReady && message.content === 'KEYWORD') { // on keyword bot enters voice channel to play an mp3 file then exits
-// 		isReady = false;
-// 		const { voiceChannel } = message.member;
-// 		voiceChannel.join().then(connection =>
-// 		{
-// 			const dispatcher = connection.playFile(path.join(./audio/FILENAMEHERE, 'MP3 FILENAME HERE'));
-// 			dispatcher.on("end", end => {
-// 				voiceChannel.leave();
-// 			});
-// 		}).catch(err => console.log(err));
-// 		isReady = true;
-// 	}
-
-//  	if (message.author.discriminator === '4DIGITCODEHERE') { // using the unicode for each emoji it can react in the specified order
-// 		message.react('🇫')
-// 			.then(() => message.react('🇷'))
-// 			.then(() => message.react('🇮'))
-// 			.then(() => message.react('🇪'))
-// 			.then(() => message.react('🇳'))
-// 			.then(() => message.react('🇩'))
-// 			.catch(() => console.error('One of the emojis failed to react.'));
-// 	}
-
-// });
