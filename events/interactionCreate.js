@@ -2,10 +2,14 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
   name: "interactionCreate",
-  execute(interaction) {
+  async execute(interaction) {
     if (interaction.isButton()) {
       //----Beginning of handling tictactoe interactions----//
       if (interaction.customId.includes("tictactoe")) {
+        //variables needed to consider win and draw
+        var isDraw = false;
+        var count = 0;
+
         //Store all information from the clicked button
         var clickedRowNumber = interaction.customId[10];
         var clickedColNumber = interaction.customId.substring(
@@ -48,18 +52,43 @@ module.exports = {
           }
         }
 
-        //update interaction
-        interaction.update({
-          embeds: [new MessageEmbed().setTitle(newPlayer)],
-          components: [components[0], components[1], components[2]],
-        });
-      }
-      //----End of tictactoe interactions----//
-    }
+        //check if the game is a draw after a button has been clicked
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 3; col++) {
+            if (
+              interaction.message.components[row].components[col].label != " "
+            ) {
+              count += 1;
+            }
+            if (count === 9) {
+              isDraw = true;
+            }
+          }
+        }
 
-    //log when someone triggers an interaction in the specific channel
-    console.log(
-      `${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`
-    );
+        //update interaction accordingly based on state of game(onging, draw, win)
+        if (isDraw === false) {
+          interaction.update({
+            embeds: [new MessageEmbed().setTitle(newPlayer)],
+            components: [components[0], components[1], components[2]],
+          });
+        }
+
+        if (isDraw === true) {
+          interaction.update({
+            embeds: [
+              new MessageEmbed().setTitle("The game has ended in a draw!"),
+            ],
+            components: [],
+          });
+        }
+        //----End of tictactoe interactions----//
+      }
+
+      //log when someone triggers an interaction in the specific channel
+      console.log(
+        `${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`
+      );
+    }
   },
 };
