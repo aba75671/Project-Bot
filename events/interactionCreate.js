@@ -1,3 +1,4 @@
+const { ButtonComponent } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
@@ -8,7 +9,9 @@ module.exports = {
       if (interaction.customId.includes("tictactoe")) {
         //variables needed to consider win and draw
         var isDraw = false;
+        var isOver = false;
         var count = 0;
+        var winner = " ";
 
         //Store all information from the clicked button
         var clickedRowNumber = interaction.customId[10];
@@ -30,10 +33,60 @@ module.exports = {
         //update based on which player's turn it is
         clickedButton.label = currentPlayer;
 
+        //check if either player has won before changing turns
+        for (let i = 0; i < 3; i++) {
+          if (
+            interaction.message.components[i].components[0].label ==
+              interaction.message.components[i].components[1].label &&
+            interaction.message.components[i].components[1].label ==
+              interaction.message.components[i].components[2].label &&
+            interaction.message.components[i].components[0].label != " "
+          ) {
+            isOver = true;
+            winner = currentPlayer;
+          }
+          if (
+            interaction.message.components[0].components[i].label ==
+              interaction.message.components[1].components[i].label &&
+            interaction.message.components[1].components[i].label ==
+              interaction.message.components[2].components[i].label &&
+            interaction.message.components[0].components[i].label != " "
+          ) {
+            isOver = true;
+            winner = currentPlayer;
+          }
+          if (
+            interaction.message.components[0].components[0].label ==
+              interaction.message.components[1].components[1].label &&
+            interaction.message.components[1].components[1].label ==
+              interaction.message.components[2].components[2].label &&
+            interaction.message.components[0].components[0].label != " "
+          ) {
+            isOver = true;
+            winner = currentPlayer;
+          }
+          if (
+            interaction.message.components[0].components[2].label ==
+              interaction.message.components[1].components[1].label &&
+            interaction.message.components[1].components[1].label ==
+              interaction.message.components[2].components[0].label &&
+            interaction.message.components[0].components[2].label != " "
+          ) {
+            isOver = true;
+            winner = currentPlayer;
+          }
+        }
+
         //taking turns
         if (currentPlayer == "X") {
+          interaction.message.components[clickedRowNumber].components[
+            clickedColNumber
+          ].setStyle("DANGER");
           currentPlayer = "O";
         } else {
+          interaction.message.components[clickedRowNumber].components[
+            clickedColNumber
+          ].setStyle("PRIMARY");
           currentPlayer = "X";
         }
 
@@ -52,7 +105,7 @@ module.exports = {
           }
         }
 
-        //check if the game is a draw after a button has been clicked
+        //check if the game is a draw
         for (let row = 0; row < 3; row++) {
           for (let col = 0; col < 3; col++) {
             if (
@@ -62,19 +115,33 @@ module.exports = {
             }
             if (count === 9) {
               isDraw = true;
+              isOver = true;
             }
           }
         }
 
-        //update interaction accordingly based on state of game(onging, draw, win)
-        if (isDraw === false) {
+        //update interaction if the game is ongoing
+        if (isDraw === false && isOver === false) {
           interaction.update({
             embeds: [new MessageEmbed().setTitle(newPlayer)],
             components: [components[0], components[1], components[2]],
           });
         }
 
-        if (isDraw === true) {
+        //update interaction if one player has won
+        if (isDraw === false && isOver === true) {
+          interaction.update({
+            embeds: [
+              new MessageEmbed().setTitle(
+                "Player " + winner + " has won the game!"
+              ),
+            ],
+            components: [],
+          });
+        }
+
+        //update interaction if the game is a draw
+        if (isDraw === true && isOver === true) {
           interaction.update({
             embeds: [
               new MessageEmbed().setTitle("The game has ended in a draw!"),
